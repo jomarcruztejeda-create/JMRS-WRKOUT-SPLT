@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- iPhone App Settings -->
+    <!-- Phone App Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
@@ -15,26 +15,37 @@
             --bg: #000000;
             --card: #1a1a1a;
             --red: #ff0000;
-            --dark-red: #8b0000;
+            --dark-red: #4a0000;
             --text: #ffffff;
             --silver: #c0c0c0;
-            --glass: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 51%, rgba(0,0,0,0.4) 100%);
+            --glass: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.4) 100%);
         }
 
         body {
             background-color: var(--bg);
-            background-image: radial-gradient(circle at center, #1a0000 0%, #000000 100%);
             color: var(--text);
             font-family: "Impact", "Arial Narrow", sans-serif;
             margin: 0;
             padding-bottom: 180px;
+            transition: background-color 1s ease;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Pulsing Red Finish State (No Text) */
+        body.finished {
+            background-color: var(--dark-red) !important;
+            animation: finish-pulse 2.5s infinite alternate;
+        }
+
+        @keyframes finish-pulse {
+            from { background-color: #200000; }
+            to { background-color: #600000; }
+        }
+
         header {
             text-align: center;
-            padding: 25px 10px;
+            padding: 30px 10px;
             background: linear-gradient(180deg, #444 0%, #000 100%);
             border-bottom: 3px solid var(--red);
             box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.4);
@@ -43,17 +54,16 @@
         header h1 {
             margin: 0;
             font-size: 2.2rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
             color: var(--red);
-            text-shadow: 3px 3px 0px #000, 0 0 10px var(--red);
+            text-shadow: 2px 2px 0px #000, 0 0 10px var(--red);
             font-style: italic;
+            letter-spacing: 2px;
         }
 
         .nav-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            background: #222;
+            background: #111;
             border-bottom: 2px solid var(--red);
             position: sticky;
             top: 0;
@@ -61,21 +71,18 @@
         }
 
         .nav-btn {
-            background: #333;
+            background: #222;
             background-image: var(--glass);
             color: var(--silver);
             border: 1px solid #000;
-            padding: 12px 2px;
+            padding: 14px 2px;
             font-size: 0.7rem;
             font-weight: bold;
-            cursor: pointer;
             text-transform: uppercase;
-            transition: 0.1s;
         }
 
         .nav-btn.active { 
             background: var(--red); 
-            background-image: var(--glass);
             color: #fff; 
             box-shadow: inset 0 0 10px #000;
         }
@@ -89,109 +96,90 @@
         .ex-card {
             background: var(--card);
             background-image: linear-gradient(135deg, #222 0%, #111 100%);
-            border: 2px solid #444;
+            border: 2px solid #333;
             border-left: 6px solid var(--red);
             margin-bottom: 12px;
-            padding: 15px;
+            padding: 18px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            border-radius: 4px;
             box-shadow: 5px 5px 0px rgba(0,0,0,1);
         }
 
-        .info { display: flex; align-items: center; gap: 15px; font-family: 'Arial', sans-serif; }
-
-        /* Y2K Style Checkbox */
         input[type="checkbox"] {
-            width: 30px;
-            height: 30px;
+            width: 34px;
+            height: 34px;
             appearance: none;
             background: #000;
             border: 2px solid var(--red);
-            border-radius: 4px;
+            border-radius: 2px;
             position: relative;
             cursor: pointer;
+            margin-right: 15px;
             box-shadow: inset 0 0 5px var(--red);
         }
 
         input[type="checkbox"]:checked::before {
             content: "X";
             color: var(--red);
-            font-weight: bold;
             position: absolute;
-            left: 5px;
-            top: -2px;
-            font-size: 24px;
-            text-shadow: 0 0 5px var(--red);
+            left: 6px; top: -4px;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--red);
         }
 
-        .name { font-weight: bold; font-size: 1.1rem; text-transform: uppercase; color: #fff; text-shadow: 1px 1px #000; }
-        .reps { color: var(--red); font-size: 0.8rem; font-weight: bold; margin-top: 2px; font-family: "Courier New", monospace; }
+        .name { font-weight: bold; font-size: 1.1rem; text-transform: uppercase; }
+        .reps { color: var(--red); font-size: 0.85rem; font-family: "Courier New", monospace; margin-top: 3px; font-weight: bold; }
 
         #timer-bar {
             position: fixed;
             bottom: 0; width: 100%;
-            background: linear-gradient(0deg, #000 0%, #333 100%);
+            background: linear-gradient(0deg, #000 0%, #222 100%);
             border-top: 4px solid var(--red);
-            padding: 15px 0;
+            padding: 20px 0;
             text-align: center;
             z-index: 200;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.9);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
         }
 
         #timer-val { 
-            font-size: 4rem; 
-            font-weight: 900; 
+            font-size: 4.5rem; 
             color: var(--red); 
-            margin-bottom: 5px; 
-            line-height: 1; 
-            font-family: 'OCR A Std', monospace;
+            font-family: "Courier New", monospace;
             text-shadow: 0 0 15px var(--red);
+            margin-bottom: 10px;
+            line-height: 1;
         }
-
-        .btn-row { display: flex; justify-content: center; gap: 10px; }
 
         .start-btn {
             background: var(--red);
             background-image: var(--glass);
             color: white;
-            border: 2px solid #400;
-            padding: 15px 40px;
+            padding: 14px 50px;
             font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
+            border-radius: 50px;
+            border: 2px solid #800;
             font-size: 1.2rem;
-            border-radius: 50px; /* Circular 2000s button style */
-            box-shadow: 0 4px 0 #800;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 #500;
             text-shadow: 1px 1px #000;
         }
 
         .start-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #800;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #500;
         }
 
-        .reset-btn {
-            background: #444;
-            background-image: var(--glass);
-            color: #bbb;
-            border: 1px solid #000;
-            padding: 10px 15px;
-            font-weight: bold;
-            border-radius: 5px;
-            text-transform: uppercase;
-        }
-
-        h2.day-title {
-            text-align: center;
-            color: #fff;
-            background: var(--red);
-            background-image: var(--glass);
-            padding: 5px;
-            clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
-            margin-top: 10px;
-            text-shadow: 2px 2px #000;
+        .reset-link {
+            background: transparent;
+            color: #555;
+            border: none;
+            text-decoration: underline;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            display: block;
+            width: 100%;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -213,10 +201,8 @@
 
 <div id="timer-bar">
     <div id="timer-val">30S</div>
-    <div class="btn-row">
-        <button class="start-btn" onclick="timer()">START</button>
-        <button class="reset-btn" onclick="resetChecks()">RESET</button>
-    </div>
+    <button class="start-btn" onclick="timer()">START REST</button>
+    <button class="reset-link" onclick="resetChecks()">RESET SESSION DATA</button>
 </div>
 
 <script>
@@ -261,39 +247,29 @@
 
     function load(day) {
         currentDay = day;
+        document.body.classList.remove('finished');
         const list = document.getElementById('workout-list');
-        
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`btn-${day}`).classList.add('active');
 
         if (day === "Wednesday") {
-            list.innerHTML = `<h2 style="text-align:center; color:var(--red); margin-top:60px; text-shadow: 0 0 10px red;">RECOVERY MODE</h2>`;
+            list.innerHTML = `<h2 style="text-align:center; color:#555; margin-top:60px; font-style:italic;">RECOVERY MODE</h2>`;
             return;
         }
 
-        let html = `<h2 class="day-title">${day.toUpperCase()} PHASE</h2>`;
+        let html = `<h2 style="border-left:5px solid var(--red); padding-left:12px; margin-bottom:20px; font-style:italic;">${day.toUpperCase()} PHASE</h2>`;
         html += renderCard("TREADMILL WARMUP", "0.5 MILES");
-
-        data[day].forEach(ex => {
-            html += renderCard(ex.n, ex.s);
-        });
-        
+        data[day].forEach(ex => html += renderCard(ex.n, ex.s));
         list.innerHTML = html;
         restoreChecks();
-        window.scrollTo(0,0);
     }
 
     function renderCard(name, reps) {
         const id = `jmrs-${currentDay}-${name.replace(/\s/g, '')}`;
         return `
             <div class="ex-card">
-                <div class="info">
-                    <input type="checkbox" id="${id}" onclick="saveCheck('${id}')">
-                    <div>
-                        <span class="name">${name}</span>
-                        <span class="reps">${reps}</span>
-                    </div>
-                </div>
+                <input type="checkbox" id="${id}" onclick="saveCheck('${id}')">
+                <div><div class="name">${name}</div><div class="reps">${reps}</div></div>
             </div>
         `;
     }
@@ -301,48 +277,61 @@
     function saveCheck(id) {
         const checkbox = document.getElementById(id);
         localStorage.setItem(id, checkbox.checked);
+        checkCompletion();
     }
 
-    function restoreChecks() {
-        const checks = document.querySelectorAll('input[type="checkbox"]');
-        checks.forEach(c => {
-            const saved = localStorage.getItem(c.id);
-            if (saved === "true") c.checked = true;
-        });
-    }
-
-    function resetChecks() {
-        if(confirm("WIPE DATA FOR THIS SESSION?")) {
-            const checks = document.querySelectorAll('input[type="checkbox"]');
-            checks.forEach(c => {
-                c.checked = false;
-                localStorage.removeItem(c.id);
-            });
+    function checkCompletion() {
+        const boxes = document.querySelectorAll('input[type="checkbox"]');
+        const allChecked = Array.from(boxes).every(b => b.checked);
+        if (allChecked && boxes.length > 0) {
+            document.body.classList.add('finished');
+        } else {
+            document.body.classList.remove('finished');
         }
     }
 
-    let clock;
+    function restoreChecks() {
+        document.querySelectorAll('input[type="checkbox"]').forEach(c => {
+            if (localStorage.getItem(c.id) === "true") c.checked = true;
+        });
+        checkCompletion();
+    }
+
+    function resetChecks() {
+        if(confirm("WIPE PROGRESS FOR TODAY?")) {
+            document.querySelectorAll('input[type="checkbox"]').forEach(c => {
+                c.checked = false;
+                localStorage.removeItem(c.id);
+            });
+            document.body.classList.remove('finished');
+        }
+    }
+
     function timer() {
-        clearInterval(clock);
         let time = 30;
         const display = document.getElementById('timer-val');
-        display.style.color = "var(--red)";
-        
-        clock = setInterval(() => {
+        const clock = setInterval(() => {
             time--;
             display.innerText = time + "S";
-            
             if (time <= 0) {
                 clearInterval(clock);
-                display.innerText = "PUSH";
-                display.style.color = "#00ff00";
-                if(window.navigator.vibrate) window.navigator.vibrate([300, 100, 300]);
+                display.innerText = "LIFT";
+                
+                // Retro Square Wave Beep
+                try {
+                    const context = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = context.createOscillator();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(440, context.currentTime);
+                    osc.connect(context.destination);
+                    osc.start();
+                    osc.stop(context.currentTime + 0.15);
+                } catch(e) { console.log("Audio play blocked"); }
             }
         }, 1000);
     }
     
     load('Monday');
 </script>
-
 </body>
 </html>
