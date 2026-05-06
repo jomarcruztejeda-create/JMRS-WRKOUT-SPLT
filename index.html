@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>JMRS WRKOUT SPLT</title>
+    
+    <style>
+        :root {
+            --bg: #000000;
+            --card: #111111;
+            --red: #ff0000;
+            --text: #ffffff;
+            --dim: #444444;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Arial Black', Gadget, sans-serif;
+            margin: 0;
+            padding-bottom: 160px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 10px;
+            background: linear-gradient(180deg, #1a0000 0%, #000000 100%);
+            border-bottom: 4px solid var(--red);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            background: #000;
+            border-bottom: 1px solid var(--dim);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--text);
+            border: none;
+            padding: 15px 5px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-right: 1px solid #222;
+        }
+
+        .nav-btn.active { background: var(--red); }
+
+        #workout-list {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .ex-card {
+            background: var(--card);
+            border-right: 4px solid var(--red);
+            margin-bottom: 10px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 2px;
+        }
+
+        .info { display: flex; align-items: center; gap: 20px; font-family: 'Inter', sans-serif; }
+
+        input[type="checkbox"] {
+            width: 30px;
+            height: 30px;
+            accent-color: var(--red);
+            cursor: pointer;
+        }
+
+        .name { font-weight: 900; font-size: 1rem; text-transform: uppercase; }
+        .reps { color: var(--red); font-size: 0.8rem; font-weight: bold; margin-top: 4px; display: block;}
+
+        #timer-bar {
+            position: fixed;
+            bottom: 0; width: 100%;
+            background: #000;
+            border-top: 3px solid var(--red);
+            padding: 20px 0;
+            text-align: center;
+            z-index: 200;
+        }
+
+        #timer-val { font-size: 3rem; font-weight: 900; color: var(--red); margin-bottom: 5px; }
+
+        .btn-row { display: flex; justify-content: center; gap: 10px; }
+
+        .start-btn {
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            background: #222;
+            color: #666;
+            border: none;
+            padding: 12px 15px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>JMRS WRKOUT SPLT</h1>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn" id="btn-Monday" onclick="load('Monday')">PUSH</button>
+    <button class="nav-btn" id="btn-Tuesday" onclick="load('Tuesday')">PULL</button>
+    <button class="nav-btn" id="btn-Wednesday" onclick="load('Wednesday')">REST</button>
+    <button class="nav-btn" id="btn-Thursday" onclick="load('Thursday')">LEGS</button>
+    <button class="nav-btn" id="btn-Friday" onclick="load('Friday')">HYPER</button>
+</div>
+
+<div id="workout-list"></div>
+
+<div id="timer-bar">
+    <div id="timer-val">30S</div>
+    <div class="btn-row">
+        <button class="start-btn" onclick="timer()">START REST</button>
+        <button class="reset-btn" onclick="resetChecks()">RESET</button>
+    </div>
+</div>
+
+<script>
+    const data = {
+        "Monday": [
+            {n: "Chest Press", s: "15, 12, FAILURE"},
+            {n: "Incline Chest Press", s: "15, 12, FAILURE"},
+            {n: "Chest Fly Machine", s: "15, 12, FAILURE"},
+            {n: "Shoulder Press", s: "15, 12, FAILURE"},
+            {n: "Lateral Raise", s: "3 SETS OF 10"},
+            {n: "Tricep Pushdowns", s: "15, 12, FAILURE"},
+            {n: "Tricep Pulldowns", s: "15, 12, FAILURE"}
+        ],
+        "Tuesday": [
+            {n: "Lat Pulldown", s: "15, 12, FAILURE"},
+            {n: "Seated Row", s: "15, 12, FAILURE"},
+            {n: "Straight Arm Pulldown", s: "15, 12, FAILURE"},
+            {n: "Cable Curl", s: "15, 12, FAILURE"},
+            {n: "Preacher Curl", s: "15, 12, FAILURE"},
+            {n: "Wrist Curls", s: "3 SETS OF 20"}
+        ],
+        "Wednesday": [],
+        "Thursday": [
+            {n: "Leg Press", s: "15, 12, FAILURE"},
+            {n: "Leg Extension", s: "15, 12, FAILURE"},
+            {n: "Seated Leg Curl", s: "15, 12, FAILURE"},
+            {n: "Abductor Machine", s: "15, 12, FAILURE"},
+            {n: "Adductor Machine", s: "15, 12, FAILURE"},
+            {n: "Calf Raises", s: "3 SETS OF 12"}
+        ],
+        "Friday": [
+            {n: "Smith Machine Bench Press", s: "15, 12, FAILURE"},
+            {n: "Lat Pulldown", s: "15, 12, FAILURE"},
+            {n: "Shoulder Press", s: "15, 12, FAILURE"},
+            {n: "Seated Row", s: "15, 12, FAILURE"},
+            {n: "Lateral Raise", s: "3 SETS OF 10"},
+            {n: "Bicep Curl", s: "15, 12, FAILURE"},
+            {n: "Tricep Pulldowns", s: "15, 12, FAILURE"}
+        ]
+    };
+
+    let currentDay = "Monday";
+
+    function load(day) {
+        currentDay = day;
+        const list = document.getElementById('workout-list');
+        
+        // Update UI buttons
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${day}`).classList.add('active');
+
+        if (day === "Wednesday") {
+            list.innerHTML = `<h2 style="text-align:center; color:var(--red); margin-top:40px;">REST DAY</h2>`;
+            return;
+        }
+
+        let html = `<h2 style="font-size:1.2rem; border-bottom:1px solid #222; padding-bottom:10px;">${day.toUpperCase()}</h2>`;
+        html += renderCard("TREADMILL WARMUP", "0.5 MILES");
+
+        data[day].forEach(ex => {
+            html += renderCard(ex.n, ex.s);
+        });
+        list.innerHTML = html;
+        restoreChecks();
+    }
+
+    function renderCard(name, reps) {
+        // Create unique ID for storage
+        const id = `${currentDay}-${name.replace(/\s/g, '')}`;
+        return `
+            <div class="ex-card">
+                <div class="info">
+                    <input type="checkbox" id="${id}" onclick="saveCheck('${id}')">
+                    <div>
+                        <span class="name">${name}</span>
+                        <span class="reps">${reps}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function saveCheck(id) {
+        const checkbox = document.getElementById(id);
+        localStorage.setItem(id, checkbox.checked);
+    }
+
+    function restoreChecks() {
+        const checks = document.querySelectorAll('input[type="checkbox"]');
+        checks.forEach(c => {
+            const saved = localStorage.getItem(c.id);
+            if (saved === "true") c.checked = true;
+        });
+    }
+
+    function resetChecks() {
+        if(confirm("Clear all checked boxes for today?")) {
+            const checks = document.querySelectorAll('input[type="checkbox"]');
+            checks.forEach(c => {
+                c.checked = false;
+                localStorage.removeItem(c.id);
+            });
+        }
+    }
+
+    let clock;
+    function timer() {
+        clearInterval(clock);
+        let time = 30;
+        const display = document.getElementById('timer-val');
+        display.style.color = "var(--red)";
+        
+        clock = setInterval(() => {
+            time--;
+            display.innerText = time + "S";
+            if (time <= 0) {
+                clearInterval(clock);
+                display.innerText = "LIFT";
+                display.style.color = "#00ff00";
+                if(window.navigator.vibrate) window.navigator.vibrate(200);
+            }
+        }, 1000);
+    }
+    
+    // Initial load
+    load('Monday');
+</script>
+
+</body>
+</html>
