@@ -2,78 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>JMRS WORKOUT</title>
+    <title>JMRS WRKOUT</title>
     
     <style>
         :root {
-            --bg: #0f172a;       /* Deep Slate */
-            --card: #1e293b;     /* Card Slate */
-            --accent: #38bdf8;   /* Sky Blue */
+            --bg: #020617;
+            --card: #1e293b;
+            --accent: #38bdf8;
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
-            --success: #10b981;  /* Emerald */
-            --input-bg: #334155; /* Input Field Blue */
+            --success: #10b981;
+            --input-bg: #0f172a;
+            --safe-bottom: env(safe-area-inset-bottom);
         }
 
         body {
             background-color: var(--bg);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
             margin: 0;
-            padding-bottom: 180px;
-            transition: background-color 0.6s ease;
+            padding-bottom: calc(200px + var(--safe-bottom));
+            transition: background 0.6s ease;
             -webkit-font-smoothing: antialiased;
-            user-select: none;
+            overscroll-behavior: none;
         }
 
-        /* Success state for completed session */
-        body.finished {
-            background-color: #064e3b !important;
-        }
+        body.finished { background-color: #064e3b !important; }
 
         header {
-            padding: 40px 20px 10px;
+            padding: 60px 25px 15px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
         }
 
-        .header-text h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .header-text p {
-            margin: 0;
-            color: var(--accent);
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .header-text h1 { margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; }
+        .header-text p { margin: 0; color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
 
         .profile-badge {
-            background: var(--accent);
-            color: var(--bg);
-            padding: 5px 14px;
-            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 800;
-            text-transform: uppercase;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        /* Progress Bar */
+        #progress-wrap {
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            margin: 0 25px 10px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--accent);
         }
 
         /* Nav Pills */
         .nav-container {
             display: flex;
             overflow-x: auto;
-            padding: 15px;
+            padding: 10px 20px;
             gap: 10px;
             scrollbar-width: none;
         }
@@ -83,196 +82,109 @@
             background: var(--card);
             color: var(--text-dim);
             border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
+            padding: 10px 22px;
+            border-radius: 14px;
             font-weight: 600;
             white-space: nowrap;
-            transition: 0.2s;
+            font-size: 0.9rem;
         }
-
-        .nav-btn.active {
-            background: var(--accent);
-            color: var(--bg);
-        }
+        .nav-btn.active { background: var(--text-main); color: var(--bg); }
 
         /* Exercise Cards */
-        #workout-list {
-            padding: 0 15px;
-        }
+        #workout-list { padding: 0 20px; }
 
         .ex-card {
             background: var(--card);
-            border-radius: 18px;
+            border-radius: 20px;
             margin-bottom: 12px;
-            padding: 18px;
+            padding: 20px;
             display: flex;
             align-items: center;
             border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .ex-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        .ex-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .name { font-size: 1.05rem; font-weight: 600; color: var(--text-main); line-height: 1.2; }
+        .reps { font-size: 0.85rem; color: var(--text-dim); }
 
-        .name {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--text-main);
-            line-height: 1.2;
-        }
-
-        .reps {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-
-        /* Weight Input */
+        /* Inputs */
         .weight-input {
             background: var(--input-bg);
-            border: 2px solid transparent;
+            border: 1.5px solid transparent;
             color: white;
-            width: 55px;
-            padding: 10px 5px;
-            border-radius: 10px;
+            width: 60px;
+            padding: 12px 0;
+            border-radius: 12px;
             text-align: center;
             font-weight: 700;
-            margin-right: 12px;
+            margin-right: 15px;
             font-size: 1rem;
         }
+        .weight-input:focus { border-color: var(--accent); outline: none; }
 
-        .weight-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: #475569;
-        }
-
-        /* Custom Checkbox */
         input[type="checkbox"] {
             width: 32px;
             height: 32px;
             appearance: none;
             background: rgba(255,255,255,0.05);
-            border: 2px solid var(--text-dim);
+            border: 2px solid #475569;
             border-radius: 10px;
             position: relative;
-            cursor: pointer;
-            transition: 0.2s;
             flex-shrink: 0;
         }
-
-        input[type="checkbox"]:checked {
-            background: var(--success);
-            border-color: var(--success);
-        }
-
+        input[type="checkbox"]:checked { background: var(--success); border-color: var(--success); }
         input[type="checkbox"]:checked::after {
-            content: "✓";
-            position: absolute;
-            color: white;
-            font-size: 20px;
-            left: 7px;
-            top: 2px;
-            font-weight: bold;
+            content: "✓"; position: absolute; color: white; font-size: 20px; left: 7px; top: 2px; font-weight: 900;
         }
 
-        /* Timer Bar */
+        /* Bottom Controls */
         #timer-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(15px);
-            padding: 20px 0 45px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            position: fixed; bottom: 0; width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px 0 calc(30px + var(--safe-bottom));
+            border-top: 1px solid rgba(255,255,255,0.08);
             text-align: center;
-            z-index: 200;
+            z-index: 100;
         }
 
-        #timer-val {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 15px;
-            font-variant-numeric: tabular-nums;
-        }
+        #timer-val { font-size: 3.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 15px; letter-spacing: -2px; }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            align-items: center;
-        }
+        .controls { display: flex; justify-content: center; gap: 12px; padding: 0 20px; }
+        .start-btn { flex: 2; background: var(--text-main); color: var(--bg); border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 1rem; text-transform: uppercase; }
+        .reset-btn { flex: 1; background: var(--card); color: var(--text-dim); border: none; padding: 16px; border-radius: 16px; font-weight: 600; font-size: 0.8rem; }
 
-        .start-btn {
-            background: var(--text-main);
-            color: var(--bg);
-            border: none;
-            padding: 14px 45px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 1rem;
-            text-transform: uppercase;
-        }
-
-        .reset-btn {
-            background: var(--card);
-            color: var(--text-dim);
-            border: none;
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        /* Modal Settings */
+        /* Modal */
         #profile-modal {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: var(--bg);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            text-align: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        .modal-title { margin-bottom: 30px; font-weight: 800; font-size: 2rem; }
-        .user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 400px; }
-        .user-choice {
-            background: var(--card);
-            border: 2px solid transparent;
-            padding: 30px 10px;
-            border-radius: 20px;
-            color: white;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
+        .user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 85%; max-width: 400px; }
+        .user-choice { background: var(--card); border: 2px solid transparent; padding: 40px 10px; border-radius: 24px; color: white; font-weight: 700; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
 <div id="profile-modal">
-    <h1 class="modal-title">WHO IS LIFTING?</h1>
+    <h1 style="margin-bottom:40px; font-weight:900;">SELECT USER</h1>
     <div class="user-grid">
         <button class="user-choice" onclick="setProfile('Jomar')">JOMAR</button>
-        <button class="user-choice" style="color: var(--text-dim);" onclick="setProfile('Guest')">GUEST</button>
+        <button class="user-choice" style="background:#111; color:#444;" onclick="setProfile('Guest')">GUEST</button>
     </div>
 </div>
 
 <header>
     <div class="header-text">
-        <p id="day-label">MONDAY</p>
-        <h1 id="phase-title">PUSH & QUADS</h1>
+        <p id="day-label">LOADING</p>
+        <h1 id="phase-title">...</h1>
     </div>
-    <div class="profile-badge" id="user-badge">JOMAR</div>
+    <div class="profile-badge" id="user-badge">...</div>
 </header>
+
+<div id="progress-wrap"><div id="progress-bar"></div></div>
 
 <nav class="nav-container">
     <button class="nav-btn active" id="btn-Monday" onclick="load('Monday')">Mon</button>
@@ -287,10 +199,10 @@
 <div id="timer-bar">
     <div id="timer-val">30s</div>
     <div class="controls">
-        <button class="start-btn" onclick="timer()">START REST</button>
-        <button class="reset-btn" onclick="resetChecks()">RESET</button>
+        <button class="start-btn" onclick="timer()">Start Rest</button>
+        <button class="reset-btn" onclick="resetChecks()">Reset</button>
     </div>
-    <button style="background:none; border:none; color:var(--text-dim); margin-top:15px; font-size:0.75rem; text-decoration:underline;" onclick="location.reload()">Switch User</button>
+    <button style="background:none; border:none; color:var(--text-dim); margin-top:20px; font-size:0.8rem;" onclick="location.reload()">Change User</button>
 </div>
 
 <script>
@@ -299,7 +211,7 @@
 
     const data = {
         "Monday": { title: "Push & Quads", ex: [
-            {n: "Chest Press (Smith Machine)", s: "15, 12, Failure"},
+            {n: "Chest Press (Smith)", s: "15, 12, Failure"},
             {n: "Shoulder Press", s: "15, 12, Failure"},
             {n: "Chest Fly Machine", s: "15, 12, Failure"},
             {n: "Leg Press", s: "15, 12, Failure"},
@@ -315,8 +227,8 @@
             {n: "Wrist Curls", s: "3 Sets of 20"}
         ]},
         "Wednesday": { title: "Rest & Recovery", ex: [] },
-        "Thursday": { title: "Upper Focus & Calves", ex: [
-            {n: "Incline Chest Press (Smith)", s: "15, 12, Failure"},
+        "Thursday": { title: "Upper & Calves", ex: [
+            {n: "Incline Press (Smith)", s: "15, 12, Failure"},
             {n: "Lateral Raise", s: "15, 12, Failure"},
             {n: "Straight Arm Pulldown", s: "15, 12, Failure"},
             {n: "Leg Press", s: "15, 12, Failure"},
@@ -330,7 +242,7 @@
             {n: "Preacher Curl", s: "15, 12, Failure"},
             {n: "Hack Squat", s: "15, 12, Failure"},
             {n: "Leg Extension", s: "15, 12, Failure"}
-        ] }
+        ]}
     };
 
     function setProfile(name) {
@@ -350,11 +262,11 @@
         document.getElementById(`btn-${day}`).classList.add('active');
 
         if (data[day].ex.length === 0) {
-            list.innerHTML = `<p style="color:var(--text-dim); text-align:center; margin-top:60px; font-weight:600;">ACTIVE RECOVERY DAY.</p>`;
+            list.innerHTML = `<p style="color:var(--text-dim); text-align:center; margin-top:60px;">RECOVERY DAY</p>`;
+            updateProgress(0);
             return;
         }
 
-        // Render Warmup without weight box
         let html = renderCard("Treadmill Warmup", "0.5 Miles", true);
         data[day].ex.forEach(ex => html += renderCard(ex.n, ex.s, false));
         list.innerHTML = html;
@@ -362,55 +274,48 @@
     }
 
     function renderCard(name, reps, isWarmup) {
-        const storageKey = `${currentUser}-${currentDay}-${name.replace(/\s/g, '')}`;
+        const key = `${currentUser}-${currentDay}-${name.replace(/\s/g, '')}`;
         return `
             <div class="ex-card">
                 <div class="ex-info">
                     <span class="name">${name}</span>
                     <span class="reps">${reps}</span>
                 </div>
-                ${!isWarmup ? `<input type="number" class="weight-input" placeholder="LBS" id="w-${storageKey}" oninput="saveWeight('${storageKey}')">` : ''}
-                <input type="checkbox" id="c-${storageKey}" onclick="saveCheck('${storageKey}')">
+                ${!isWarmup ? `<input type="number" class="weight-input" placeholder="LBS" id="w-${key}" oninput="localStorage.setItem('w-${key}', this.value)">` : ''}
+                <input type="checkbox" id="c-${key}" onclick="saveCheck('${key}')">
             </div>
         `;
     }
 
-    function saveWeight(key) {
-        localStorage.setItem(`w-${key}`, document.getElementById(`w-${key}`).value);
-    }
-
     function saveCheck(key) {
         localStorage.setItem(`c-${key}`, document.getElementById(`c-${key}`).checked);
-        checkCompletion();
+        updateProgress();
     }
 
     function restoreData() {
         document.querySelectorAll('input').forEach(input => {
             const saved = localStorage.getItem(input.id);
-            if (input.type === "checkbox") {
-                input.checked = (saved === "true");
-            } else {
-                input.value = saved || "";
-            }
+            if (input.type === "checkbox") input.checked = (saved === "true");
+            else input.value = saved || "";
         });
-        checkCompletion();
+        updateProgress();
     }
 
-    function checkCompletion() {
+    function updateProgress() {
         const boxes = document.querySelectorAll('input[type="checkbox"]');
-        const allChecked = Array.from(boxes).every(b => b.checked);
-        document.body.classList.toggle('finished', allChecked && boxes.length > 0);
+        const checked = Array.from(boxes).filter(b => b.checked).length;
+        const percent = (checked / boxes.length) * 100 || 0;
+        document.getElementById('progress-bar').style.width = percent + "%";
+        document.body.classList.toggle('finished', percent === 100 && boxes.length > 0);
     }
 
     function resetChecks() {
-        if(confirm("Clear checks for this session? Weights will be kept.")) {
+        if(confirm("Start fresh session? (Weights saved)")) {
             document.querySelectorAll('input[type="checkbox"]').forEach(c => {
-                if (c.id.includes(currentDay)) {
-                    c.checked = false;
-                    localStorage.removeItem(c.id);
-                }
+                c.checked = false;
+                localStorage.removeItem(c.id);
             });
-            document.body.classList.remove('finished');
+            updateProgress();
         }
     }
 
@@ -418,23 +323,15 @@
         let time = 30;
         const display = document.getElementById('timer-val');
         const clock = setInterval(() => {
-            time--;
-            display.innerText = time + "s";
+            time--; display.innerText = time + "s";
             if (time <= 0) {
-                clearInterval(clock);
-                display.innerText = "GO";
-                
-                // Audio Beep
-                const context = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = context.createOscillator();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(550, context.currentTime);
-                osc.connect(context.destination);
-                osc.start();
-                osc.stop(context.currentTime + 0.15);
-
-                // Haptic feedback
-                if(window.navigator.vibrate) window.navigator.vibrate(200);
+                clearInterval(clock); display.innerText = "GO";
+                try {
+                    const ctx = new AudioContext();
+                    const o = ctx.createOscillator();
+                    o.connect(ctx.destination);
+                    o.start(); o.stop(ctx.currentTime + 0.1);
+                } catch(e) {}
             }
         }, 1000);
     }
